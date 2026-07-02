@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LensLog — the contact lens tracker that keeps count</title>
+<meta name="description" content="LensLog keeps count of your contact lenses — days on this pair, lenses left in the box, prescriptions and exams. Private by design: no account, no analytics, no server.">
+<meta property="og:title" content="LensLog">
+<meta property="og:description" content="How old is this pair? LensLog keeps count — privately, on your iPhone.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16232B;
+  --iris:#3A6B8A;
+  --iris-deep:#2B5069;
+  --iris-light:#9DBACC;
+  --mist:#DCE5EA;
+  --paper:#F6F4F0;
+  --lid:#F5EDEB;
+  --overdue:#C23A33;
+  --maxw:1060px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Instrument Sans",system-ui,sans-serif;
+  background:var(--paper);color:var(--ink);
+  font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--iris-deep)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--iris);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:"Spline Sans Mono",ui-monospace,monospace}
+
+/* ---------- nav ---------- */
+nav{padding:26px 0}
+nav .wrap{display:flex;align-items:center;justify-content:space-between}
+.wordmark{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:21px;letter-spacing:-.02em}
+.wordmark svg{width:26px;height:26px}
+nav .links{display:flex;gap:26px;font-size:15px}
+nav .links a{text-decoration:none;color:var(--ink);opacity:.75}
+nav .links a:hover{opacity:1}
+
+/* ---------- hero ---------- */
+.hero .wrap{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;
+  padding-top:48px;padding-bottom:84px;
+}
+.eyebrow{font-family:"Spline Sans Mono",monospace;font-size:13px;letter-spacing:.14em;
+  color:var(--iris-deep);text-transform:uppercase;margin-bottom:18px}
+h1{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:clamp(44px,6.4vw,72px);font-weight:700;line-height:1.02;
+  letter-spacing:-.028em;margin-bottom:22px;
+}
+h1 em{font-style:normal;color:var(--iris)}
+.hero p.lede{font-size:19px;max-width:30em;color:#3c4a53;margin-bottom:34px}
+.cta-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.btn{
+  display:inline-block;background:var(--ink);color:#fff;text-decoration:none;
+  font-weight:600;font-size:17px;padding:15px 28px;border-radius:999px;
+  transition:background .15s ease, transform .15s ease;
+}
+.btn:hover{background:var(--iris-deep);transform:translateY(-1px)}
+.cta-row .alt{font-size:15px}
+.fineprint{font-family:"Spline Sans Mono",monospace;font-size:12.5px;letter-spacing:.06em;
+  color:#6a7680;margin-top:20px}
+
+/* ---------- the eye ---------- */
+.eye-figure{text-align:center}
+.eye-figure svg{width:min(100%,430px);height:auto;display:block;margin:0 auto}
+.day-caption{
+  font-family:"Spline Sans Mono",monospace;font-size:14px;letter-spacing:.12em;
+  color:var(--iris-deep);margin-top:18px;
+}
+.day-caption b{color:var(--ink);font-weight:500}
+/* blink: lids sweep closed then open once on load */
+@keyframes blink{
+  0%,78%{transform:scaleY(0)}
+  88%{transform:scaleY(1)}
+  100%{transform:scaleY(0)}
+}
+.lids{transform-origin:215px 150px;transform:scaleY(0);animation:blink 3.2s ease .4s 1}
+@media (prefers-reduced-motion:reduce){
+  .lids{animation:none}
+  .btn{transition:none}
+}
+
+/* ---------- rx-card features ---------- */
+.features{background:#fff;border-top:1px solid var(--mist);border-bottom:1px solid var(--mist)}
+.features .wrap{padding-top:76px;padding-bottom:76px}
+.features h2{
+  font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(26px,3.4vw,34px);
+  font-weight:600;letter-spacing:-.02em;margin-bottom:8px;
+}
+.features .sub{color:#5a6871;margin-bottom:44px;max-width:38em}
+.rx-card{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--mist)}
+.rx-row{
+  padding:30px 28px 32px 0;border-bottom:1px solid var(--mist);
+  display:grid;grid-template-columns:96px 1fr;gap:18px;align-items:start;
+}
+.rx-row:nth-child(odd){padding-right:44px}
+.rx-row:nth-child(even){padding-left:44px;border-left:1px solid var(--mist)}
+.rx-label{
+  font-family:"Spline Sans Mono",monospace;font-size:13px;letter-spacing:.1em;
+  color:var(--iris-deep);padding-top:4px;
+}
+.rx-row h3{font-family:"Bricolage Grotesque",sans-serif;font-size:19px;font-weight:600;
+  letter-spacing:-.01em;margin-bottom:6px}
+.rx-row p{font-size:15.5px;color:#4a5860}
+
+/* ---------- privacy band ---------- */
+.privacy{background:var(--ink);color:var(--lid)}
+.privacy .wrap{padding-top:84px;padding-bottom:84px;text-align:center}
+.privacy h2{
+  font-family:"Bricolage Grotesque",sans-serif;
+  font-size:clamp(30px,4.6vw,48px);font-weight:700;letter-spacing:-.025em;
+  line-height:1.15;margin-bottom:20px;
+}
+.privacy h2 span{display:block}
+.privacy p{max-width:36em;margin:0 auto 28px;color:#b9c6ce;font-size:17px}
+.privacy a.policy{color:var(--iris-light);font-weight:500}
+
+/* ---------- footer ---------- */
+footer .wrap{padding:44px 24px 56px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  font-size:14px;color:#6a7680}
+footer a{color:#4a5860;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
+
+@media (max-width:820px){
+  .hero .wrap{grid-template-columns:1fr;gap:40px;padding-top:16px;padding-bottom:60px}
+  .eye-figure{order:-1}
+  .eye-figure svg{width:min(72%,320px)}
+  .rx-card{grid-template-columns:1fr}
+  .rx-row:nth-child(odd){padding-right:0}
+  .rx-row:nth-child(even){padding-left:0;border-left:none}
+  nav .links{gap:18px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="wordmark" href="/">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M2 20 Q 20 2 38 20 Q 20 38 2 20 Z" fill="none" stroke="#16232B" stroke-width="2.6"/>
+        <circle cx="20" cy="20" r="8.5" fill="#3A6B8A"/>
+        <circle cx="20" cy="20" r="3.6" fill="#16232B"/>
+        <circle cx="17.2" cy="17" r="1.7" fill="#fff"/>
+      </svg>
+      LensLog
+    </a>
+    <div class="links">
+      <a href="/privacy/">Privacy</a>
+      <a href="mailto:lenslog@codeshrew.com">Support</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Contact lens tracker · iPhone</p>
+      <h1>How old is<br>this <em>pair?</em></h1>
+      <p class="lede">LensLog keeps the count you can’t — days on the pair you’re
+      wearing, lenses left in the box, prescriptions, exams. It nudges you the
+      day a pair is due, so two weeks never quietly becomes six.</p>
+      <div class="cta-row">
+        <a class="btn" href="mailto:lenslog@codeshrew.com?subject=LensLog%20beta%20invite&body=Hi%20—%20I%27d%20like%20to%20try%20the%20LensLog%20beta.">Request a TestFlight invite</a>
+        <a class="alt" href="/privacy/">Read the privacy policy</a>
+      </div>
+      <p class="fineprint">FREE BETA · TESTFLIGHT · NO ACCOUNT NEEDED</p>
+    </div>
+
+    <figure class="eye-figure" aria-label="A drawn eye whose iris shows day 11 of a 14-day lens">
+      <svg viewBox="0 0 430 300" role="img">
+        <defs>
+          <clipPath id="eyeClip">
+            <path d="M25 150 Q 215 -10 405 150 Q 215 310 25 150 Z"/>
+          </clipPath>
+          <radialGradient id="irisGrad" cx="46%" cy="42%">
+            <stop offset="0%" stop-color="#5D8BA8"/>
+            <stop offset="70%" stop-color="#3A6B8A"/>
+            <stop offset="100%" stop-color="#2B5069"/>
+          </radialGradient>
+        </defs>
+
+        <!-- sclera -->
+        <path d="M25 150 Q 215 -10 405 150 Q 215 310 25 150 Z"
+              fill="#FDFDFC" stroke="#16232B" stroke-width="5"/>
+
+        <g clip-path="url(#eyeClip)">
+          <!-- iris -->
+          <circle cx="215" cy="150" r="86" fill="url(#irisGrad)"/>
+          <!-- day ring: track, then 11/14 progress, then 14 ticks -->
+          <circle cx="215" cy="150" r="66" fill="none" stroke="#DCE5EA" stroke-width="13" opacity=".55"/>
+          <circle cx="215" cy="150" r="66" fill="none" stroke="#CFE3EF" stroke-width="13"
+                  stroke-linecap="butt" stroke-dasharray="325.8 414.7"
+                  transform="rotate(-90 215 150)"/>
+          <circle cx="215" cy="150" r="66" fill="none" stroke="#2B5069" stroke-width="14"
+                  stroke-dasharray="1.5 28.11" stroke-dashoffset=".75" opacity=".9"/>
+          <!-- pupil + catchlight -->
+          <circle cx="215" cy="150" r="36" fill="#101B22"/>
+          <circle cx="200" cy="134" r="9" fill="#fff" opacity=".92"/>
+          <circle cx="232" cy="168" r="4" fill="#fff" opacity=".35"/>
+          <!-- lids for the blink -->
+          <g class="lids">
+            <path d="M25 150 Q 215 -10 405 150 L 405 0 L 25 0 Z" fill="#F5EDEB"/>
+            <path d="M25 150 Q 215 310 405 150 L 405 300 L 25 300 Z" fill="#F5EDEB"/>
+          </g>
+        </g>
+      </svg>
+      <figcaption class="day-caption">DAY <b>11</b> / 14 · CHANGE SUNDAY</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section class="features">
+  <div class="wrap">
+    <h2>Everything on the prescription card. And the stuff that isn’t.</h2>
+    <p class="sub">Four counts every lens wearer keeps in their head. LensLog keeps them for you.</p>
+    <div class="rx-card">
+      <div class="rx-row">
+        <span class="rx-label">WEAR</span>
+        <div>
+          <h3>A countdown for every pair</h3>
+          <p>Day 1 is the day you open them. The countdown runs on the calendar —
+          the way replacement actually works — and reminds you the day before a
+          pair is due.</p>
+        </div>
+      </div>
+      <div class="rx-row">
+        <span class="rx-label">SUPPLY</span>
+        <div>
+          <h3>Boxes that count themselves</h3>
+          <p>Logging a change draws a lens from stock, per eye. “How many are
+          left?” is a glance, with a heads-up before you run low and before a
+          box expires.</p>
+        </div>
+      </div>
+      <div class="rx-row">
+        <span class="rx-label">RX</span>
+        <div>
+          <h3>Prescriptions, explained</h3>
+          <p>Contacts and glasses Rx, exams, and your eye doctor in one place —
+          plus plain-language explanations of what every value on the card
+          actually means.</p>
+        </div>
+      </div>
+      <div class="rx-row">
+        <span class="rx-label">HISTORY</span>
+        <div>
+          <h3>Your whole lens life</h3>
+          <p>A timeline of changes, incidents, and notes. Import years of old
+          logs; export everything as JSON whenever you want. It’s your data.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="privacy">
+  <div class="wrap">
+    <h2><span>No account. No analytics.</span><span>No server.</span></h2>
+    <p>LensLog can’t see your data. It lives on your iPhone and — if you turn on
+    sync — in your own private iCloud, which only you can access. We collect
+    nothing about you, and there’s nothing to sign up for.</p>
+    <a class="policy" href="/privacy/">Read the full privacy policy →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div>© 2026 Stefan Liedle · codeshrew</div>
+      <p class="disclaimer">LensLog is a tracking tool, not medical advice. Always
+      follow the wear and replacement schedule your eye care professional
+      prescribes.</p>
+    </div>
+    <div>
+      <a href="/privacy/">Privacy policy</a> ·
+      <a href="mailto:lenslog@codeshrew.com">lenslog@codeshrew.com</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
