@@ -148,6 +148,31 @@ h1 em{font-style:normal;color:var(--iris)}
   .shots{grid-template-columns:1fr;max-width:340px}
 }
 
+/* ---------- make it yours (eye variants) ---------- */
+.yours{background:var(--card-bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.yours .wrap{padding-top:72px;padding-bottom:72px;display:grid;
+  grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center}
+.yours h2{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(26px,3.4vw,34px);
+  font-weight:600;letter-spacing:-.02em;margin-bottom:12px}
+.yours p{color:var(--muted);max-width:30em;margin-bottom:26px}
+.swatches{display:flex;gap:14px;flex-wrap:wrap}
+.swatch{
+  width:44px;height:44px;border-radius:50%;border:3px solid transparent;
+  cursor:pointer;padding:0;background-clip:padding-box;
+  transition:transform .12s ease;
+}
+.swatch:hover{transform:scale(1.1)}
+.swatch[aria-pressed="true"]{border-color:var(--accent);transform:scale(1.12)}
+.swatch-name{font-family:"Spline Sans Mono",monospace;font-size:12.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--soft);margin-top:16px}
+.yours .phone-scale{transform:scale(.56);transform-origin:top center;height:calc(868px*.56)}
+.yours .phone-hero{justify-content:center}
+@media (max-width:820px){
+  .yours .wrap{grid-template-columns:1fr;gap:28px}
+  .yours .phone-hero{order:2}
+  .yours .phone-scale{transform:scale(.46);height:calc(868px*.46)}
+}
+
 /* ---------- privacy band ---------- */
 .privacy{background:var(--band-bg);color:var(--band-text)}
 .privacy .wrap{padding-top:84px;padding-bottom:84px;text-align:center}
@@ -311,6 +336,43 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
   </div>
 </section>
 
+<section class="yours">
+  <div class="wrap">
+    <div>
+      <h2>Make it yours</h2>
+      <p>The eye on your Today screen is drawn, not stock — so it can look like
+      <em>your</em> eye. Pick any iris, eyelid, and glasses color from the
+      built-in presets or a full color picker.</p>
+      <div class="swatches" role="group" aria-label="Preview eye colors">
+        <button class="swatch" data-variant="dark-brown" style="background:#4A2C1A" aria-label="Dark brown eyes" aria-pressed="false"></button>
+        <button class="swatch" data-variant="brown" style="background:#6B4226" aria-label="Brown eyes" aria-pressed="false"></button>
+        <button class="swatch" data-variant="blue" style="background:#3A6B8A" aria-label="Blue eyes" aria-pressed="true"></button>
+        <button class="swatch" data-variant="hazel" style="background:#7D6233" aria-label="Hazel eyes" aria-pressed="false"></button>
+        <button class="swatch" data-variant="amber" style="background:#9A5E1F" aria-label="Amber eyes" aria-pressed="false"></button>
+        <button class="swatch" data-variant="green" style="background:#5B7245" aria-label="Green eyes" aria-pressed="false"></button>
+      </div>
+      <p class="swatch-name" id="swatch-name">Blue</p>
+    </div>
+    <div class="phone-hero">
+      <div class="phone-scale">
+        <div class="device device-iphone-14-pro">
+          <div class="device-frame">
+            <picture id="variant-picture">
+              <source id="variant-dark" srcset="/img/variants/dark-blue.png" media="(prefers-color-scheme: dark)">
+              <img id="variant-img" class="device-screen" src="/img/variants/light-blue.png" alt="LensLog Today screen with a blue iris" loading="lazy">
+            </picture>
+          </div>
+          <div class="device-stripe"></div>
+          <div class="device-header"></div>
+          <div class="device-sensors"></div>
+          <div class="device-btns"></div>
+          <div class="device-power"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="privacy">
   <div class="wrap">
     <h2><span>No account. No analytics.</span><span>No server.</span></h2>
@@ -346,6 +408,31 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
   document.querySelectorAll("a[data-mail]").forEach(function (a) {
     a.href = "mailto:" + addr + (a.getAttribute("data-mail") || "");
     if (a.hasAttribute("data-mail-text")) a.textContent = addr;
+  });
+})();
+
+/* Eye-color swatches: swap the variant screenshot (both color schemes). */
+(function () {
+  var darkSrc = document.getElementById("variant-dark");
+  var img = document.getElementById("variant-img");
+  var nameEl = document.getElementById("swatch-name");
+  var swatches = document.querySelectorAll(".swatch");
+  swatches.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var v = btn.getAttribute("data-variant");
+      darkSrc.srcset = "/img/variants/dark-" + v + ".png";
+      img.src = "/img/variants/light-" + v + ".png";
+      img.alt = "LensLog Today screen with " + btn.getAttribute("aria-label").toLowerCase();
+      nameEl.textContent = btn.getAttribute("aria-label").replace(" eyes", "");
+      swatches.forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+    });
+  });
+  /* Prefetch the other variants once idle so swaps are instant. */
+  (window.requestIdleCallback || setTimeout)(function () {
+    var scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    swatches.forEach(function (btn) {
+      new Image().src = "/img/variants/" + scheme + "-" + btn.getAttribute("data-variant") + ".png";
+    });
   });
 })();
 </script>
