@@ -8,9 +8,7 @@
 <meta property="og:title" content="LensLog">
 <meta property="og:description" content="How old is this pair? LensLog keeps count — privately, on your iPhone.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 :root{
   --ink:#16232B;
@@ -159,7 +157,7 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
     </a>
     <div class="links">
       <a href="/privacy/">Privacy</a>
-      <a href="mailto:lenslog@codeshrew.com">Support</a>
+      <a href="/support/">Support</a>
     </div>
   </div>
 </nav>
@@ -170,13 +168,13 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
       <p class="eyebrow">Contact lens tracker · iPhone</p>
       <h1>How old is<br>this <em>pair?</em></h1>
       <p class="lede">LensLog keeps the count you can’t — days on the pair you’re
-      wearing, lenses left in the box, prescriptions, exams. It nudges you the
-      day a pair is due, so two weeks never quietly becomes six.</p>
+      wearing, lenses left in the box, prescriptions, exams. It can nudge you
+      when a pair is due, so two weeks doesn’t quietly become six.</p>
       <div class="cta-row">
-        <a class="btn" href="mailto:lenslog@codeshrew.com?subject=LensLog%20beta%20invite&body=Hi%20—%20I%27d%20like%20to%20try%20the%20LensLog%20beta.">Request a TestFlight invite</a>
+        <a class="btn" href="/support/" data-mail="?subject=LensLog%20beta%20invite&body=Hi%20—%20I%27d%20like%20to%20try%20the%20LensLog%20beta.">Request a TestFlight invite</a>
         <a class="alt" href="/privacy/">Read the privacy policy</a>
       </div>
-      <p class="fineprint">FREE BETA · TESTFLIGHT · NO ACCOUNT NEEDED</p>
+      <p class="fineprint">FREE BETA · TESTFLIGHT · NO LENSLOG ACCOUNT</p>
     </div>
 
     <figure class="eye-figure" aria-label="A drawn eye whose iris shows day 11 of a 14-day lens">
@@ -232,7 +230,7 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
         <div>
           <h3>A countdown for every pair</h3>
           <p>Day 1 is the day you open them. The countdown runs on the calendar —
-          the way replacement actually works — and reminds you the day before a
+          the way replacement actually works — and can remind you before a
           pair is due.</p>
         </div>
       </div>
@@ -250,8 +248,8 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
         <div>
           <h3>Prescriptions, explained</h3>
           <p>Contacts and glasses Rx, exams, and your eye doctor in one place —
-          plus plain-language explanations of what every value on the card
-          actually means.</p>
+          plus plain-language explanations of what the values on your card
+          actually mean.</p>
         </div>
       </div>
       <div class="rx-row">
@@ -270,7 +268,7 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
   <div class="wrap">
     <h2><span>No account. No analytics.</span><span>No server.</span></h2>
     <p>LensLog can’t see your data. It lives on your iPhone and — if you turn on
-    sync — in your own private iCloud, which only you can access. We collect
+    sync — in your own private iCloud, where we can’t see it. The app collects
     nothing about you, and there’s nothing to sign up for.</p>
     <a class="policy" href="/privacy/">Read the full privacy policy →</a>
   </div>
@@ -283,13 +281,27 @@ footer .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
       <p class="disclaimer">LensLog is a tracking tool, not medical advice. Always
       follow the wear and replacement schedule your eye care professional
       prescribes.</p>
+      <p class="disclaimer">Apple, iPhone, iCloud, and TestFlight are trademarks
+      of Apple Inc.</p>
     </div>
     <div>
       <a href="/privacy/">Privacy policy</a> ·
-      <a href="mailto:lenslog@codeshrew.com">lenslog@codeshrew.com</a>
+      <a href="/support/">Support</a> ·
+      <a href="/support/" data-mail="" data-mail-text>contact</a>
     </div>
   </div>
 </footer>
+
+<script>
+/* Assemble the contact address client-side so it isn't scraped from the HTML. */
+(function () {
+  var addr = ["lenslog", "codeshrew.com"].join("@");
+  document.querySelectorAll("a[data-mail]").forEach(function (a) {
+    a.href = "mailto:" + addr + (a.getAttribute("data-mail") || "");
+    if (a.hasAttribute("data-mail-text")) a.textContent = addr;
+  });
+})();
+</script>
 
 </body>
 </html>

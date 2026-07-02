@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support — LensLog</title>
+<meta name="description" content="Get help with LensLog, request a TestFlight beta invite, or report a problem.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+:root{--ink:#16232B;--iris:#3A6B8A;--iris-deep:#2B5069;--mist:#DCE5EA;--paper:#F6F4F0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Instrument Sans",system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--iris-deep)}
+a:focus-visible{outline:3px solid var(--iris);outline-offset:3px;border-radius:4px}
+.wrap{max-width:720px;margin:0 auto;padding:0 24px}
+nav{padding:26px 0}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;max-width:1060px}
+.wordmark{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:21px;letter-spacing:-.02em}
+.wordmark svg{width:26px;height:26px}
+nav .links a{text-decoration:none;color:var(--ink);opacity:.75;font-size:15px}
+nav .links a:hover{opacity:1}
+main{padding:32px 0 80px}
+main h1{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(32px,4.6vw,44px);
+  font-weight:700;letter-spacing:-.025em;line-height:1.1;margin-bottom:18px}
+main h2{font-family:"Bricolage Grotesque",sans-serif;font-size:22px;font-weight:600;
+  letter-spacing:-.015em;margin:38px 0 10px}
+main p{margin:0 0 14px;color:#2e3c45}
+.mono{font-family:"Spline Sans Mono",ui-monospace,monospace;font-size:15px}
+.card{background:#fff;border:1px solid var(--mist);border-radius:14px;padding:22px 24px;margin:22px 0}
+footer{border-top:1px solid var(--mist)}
+footer .wrap{max-width:1060px;padding:32px 24px 48px;font-size:14px;color:#6a7680;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{color:#4a5860;text-decoration:none}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="wordmark" href="/">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M2 20 Q 20 2 38 20 Q 20 38 2 20 Z" fill="none" stroke="#16232B" stroke-width="2.6"/>
+        <circle cx="20" cy="20" r="8.5" fill="#3A6B8A"/>
+        <circle cx="20" cy="20" r="3.6" fill="#16232B"/>
+        <circle cx="17.2" cy="17" r="1.7" fill="#fff"/>
+      </svg>
+      LensLog
+    </a>
+    <div class="links"><a href="/">← lenslog.codeshrew.com</a></div>
+  </div>
+</nav>
+<main>
+<div class="wrap">
+<h1>Support</h1>
+<p>LensLog is made by one person, and support comes from the same person —
+email is the fastest way to reach me.</p>
+
+<div class="card">
+  <p style="margin-bottom:6px"><strong>Email</strong></p>
+  <p class="mono" style="margin-bottom:0"><a href="/privacy/#contact" data-mail="" data-mail-text>enable JavaScript to reveal, or see the privacy policy</a></p>
+</div>
+
+<h2>Requesting a beta invite</h2>
+<p>LensLog is currently in a TestFlight beta. Email with the subject
+“LensLog beta invite” and I’ll send you a TestFlight invitation. You’ll need
+an iPhone and the free TestFlight app.</p>
+
+<h2>Reporting a problem</h2>
+<p>Describe what you did, what you expected, and what happened instead —
+screenshots help. Beta testers can also send feedback and crash reports
+directly from TestFlight (screenshot → share → send beta feedback), which
+reaches me anonymized through Apple.</p>
+
+<h2>Your data</h2>
+<p>I can’t see, recover, or reset your data — it lives on your device and in
+your own iCloud, and never reaches me. For backup and restore, use the app’s
+built-in export/import (Settings → Data). See the
+<a href="/privacy/">privacy policy</a>.</p>
+
+<p style="margin-top:34px;font-size:14px;color:#6a7680">LensLog is a tracking
+tool, not medical advice. For anything about your eyes or vision, talk to your
+eye care professional.</p>
+</div>
+</main>
+<footer>
+  <div class="wrap">
+    <div>© 2026 Stefan Liedle · codeshrew</div>
+    <div><a href="/">Home</a> · <a href="/privacy/">Privacy policy</a></div>
+  </div>
+</footer>
+<script>
+(function () {
+  var addr = ["lenslog", "codeshrew.com"].join("@");
+  document.querySelectorAll("a[data-mail]").forEach(function (a) {
+    a.href = "mailto:" + addr + (a.getAttribute("data-mail") || "");
+    if (a.hasAttribute("data-mail-text")) a.textContent = addr;
+  });
+})();
+</script>
+</body>
+</html>
