@@ -158,16 +158,11 @@ h1 em{font-style:normal;color:var(--iris)}
 .feature h3{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(21px,2.6vw,26px);
   font-weight:600;letter-spacing:-.015em;margin-bottom:10px}
 .feature p{font-size:16.5px;color:var(--muted);max-width:26em}
-.feature-shot{
-  justify-self:center;width:min(340px,100%);aspect-ratio:4/5;
-  border-radius:24px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);
-  min-width:0;
-}
-.feature-shot img{width:100%;height:100%;object-fit:cover;object-position:var(--pos,center top)}
+.feature-phone{--s:.52}
 @media (max-width:820px){
   .feature{grid-template-columns:1fr;gap:26px;padding:38px 0}
   .feature.flip .feature-copy{order:0}
-  .feature-shot{width:min(300px,100%)}
+  .feature-phone{--s:.44}
 }
 
 /* ---------- learn band (education explorers) ---------- */
@@ -182,7 +177,6 @@ h1 em{font-style:normal;color:var(--iris)}
   color:var(--soft);
 }
 .learn .sample-line b{color:var(--accent);font-weight:500}
-.learn .feature-shot{aspect-ratio:3/4}
 @media (max-width:820px){
   .learn .wrap{grid-template-columns:1fr;gap:26px}
 }
@@ -251,7 +245,7 @@ footer.site .disclaimer{max-width:44em;font-size:13px;margin-top:10px}
 /* ---------- responsive hero ---------- */
 @media (max-width:820px){
   .hero .wrap{grid-template-columns:1fr;gap:34px;padding-top:6px;padding-bottom:54px}
-  .phone-hero{order:-1}
+  .hero .phone-hero{order:-1}
   .rx-card{grid-template-columns:1fr}
   .rx-row:nth-child(odd){padding-right:0}
   .rx-row:nth-child(even){padding-left:0;border-left:none}
