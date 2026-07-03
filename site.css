@@ -138,7 +138,11 @@ h1 em{font-style:normal;color:var(--iris)}
 .phone-hero{display:flex;justify-content:center;min-width:0}
 .phone-scale{
   --s:.68;
-  transform:scale(var(--s));transform-origin:top center;
+  /* Origin top LEFT: with the wrapper sized to 428×868 × --s, scaling the
+     428px content from the left edge makes it exactly fill the wrapper.
+     (top center would scale around the SHRUNKEN wrapper's midline and shove
+     the render right by (428·s/2)(1−s) — the off-center QA follow-up.) */
+  transform:scale(var(--s));transform-origin:top left;
   width:calc(428px*var(--s));height:calc(868px*var(--s));
 }
 .device .device-screen{object-fit:cover}
