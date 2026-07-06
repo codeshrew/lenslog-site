@@ -248,19 +248,14 @@
     <div>
       <h2 class="h2 reveal">Make it yours</h2>
       <p class="reveal">The eye on your Today screen is drawn, not stock — so it can look like
-      <em>your</em> eye. Pick any iris, eyelid, and glasses color from the
-      built-in presets or a full color picker.</p>
-      <div class="swatches reveal" role="group" aria-label="Preview eye colors">
-        <button class="swatch" data-variant="dark-brown" style="background:#4A2C1A" aria-label="Dark brown eyes" aria-pressed="false"></button>
-        <button class="swatch" data-variant="brown" style="background:#6B4226" aria-label="Brown eyes" aria-pressed="false"></button>
-        <button class="swatch" data-variant="blue" style="background:#3A6B8A" aria-label="Blue eyes" aria-pressed="true"></button>
-        <button class="swatch" data-variant="hazel" style="background:#7D6233" aria-label="Hazel eyes" aria-pressed="false"></button>
-        <button class="swatch" data-variant="amber" style="background:#9A5E1F" aria-label="Amber eyes" aria-pressed="false"></button>
-        <button class="swatch" data-variant="green" style="background:#5B7245" aria-label="Green eyes" aria-pressed="false"></button>
-      </div>
-      <p class="swatch-name reveal" id="swatch-name" aria-live="polite">Blue</p>
+      <em>your</em> eye. Set the iris, eyelid, and glasses to a favorite preset —
+      or dial in <em>any</em> color with the full picker, right in the app.</p>
+      <p class="swatch-name reveal" id="eye-caption" aria-live="polite">Blue eyes</p>
+      <div class="eye-dots reveal" id="eye-dots" role="tablist" aria-label="Example eye looks"></div>
+      <p class="eye-hint reveal">Auto-playing — swipe the phone or tap a dot to explore.</p>
     </div>
-    <div class="phone-hero reveal">
+    <div class="phone-hero reveal" id="eye-stage" tabindex="0" role="group"
+         aria-label="Example eye looks — use the left and right arrow keys to change">
       <div class="phone-scale">
         <div class="device device-iphone-14-pro">
           <div class="device-frame">
@@ -321,38 +316,110 @@
   });
 })();
 
-/* Eye-color swatches: crossfade to the chosen variant (both color schemes). */
+/* "Make it yours" carousel: auto-advancing / swipeable crossfade through a few
+   example eyes, ending on a screenshot of the actual color picker — so the set
+   reads as "any color", not "pick one of these six". The picker slide is only
+   shown once its image exists (probed at load), so the strip degrades cleanly
+   to the six eye examples if it's missing. */
 (function () {
   var darkSrc = document.getElementById("variant-dark");
   var img = document.getElementById("variant-img");
-  var nameEl = document.getElementById("swatch-name");
-  var swatches = document.querySelectorAll(".swatch");
-  swatches.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var v = btn.getAttribute("data-variant");
-      img.classList.add("swapping");
-      var apply = function () {
-        darkSrc.srcset = "/img/variants/dark-" + v + ".png";
-        img.src = "/img/variants/light-" + v + ".png";
-        img.alt = "LensLog Today screen with " + btn.getAttribute("aria-label").toLowerCase();
-        img.addEventListener("load", function onload() {
-          img.removeEventListener("load", onload);
-          img.classList.remove("swapping");
-        });
-        /* If the image was cached, load may not fire — clear shortly anyway. */
-        setTimeout(function () { img.classList.remove("swapping"); }, 300);
-      };
-      setTimeout(apply, 110);
-      nameEl.textContent = btn.getAttribute("aria-label").replace(" eyes", "");
-      swatches.forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+  var caption = document.getElementById("eye-caption");
+  var dotsEl = document.getElementById("eye-dots");
+  var stage = document.getElementById("eye-stage");
+  if (!img || !stage) return;
+
+  var slides = [
+    { v: "blue",       label: "Blue eyes" },
+    { v: "hazel",      label: "Hazel eyes" },
+    { v: "amber",      label: "Amber eyes" },
+    { v: "green",      label: "Green eyes" },
+    { v: "brown",      label: "Brown eyes" },
+    { v: "dark-brown", label: "Dark brown eyes" },
+    { v: "customizer", label: "Any color — the full picker", custom: true }
+  ];
+  // custom = the picker screenshot (/img/{scheme}-customizer.png);
+  // the rest are the pre-rendered eye variants (/img/variants/{scheme}-{v}.png).
+  function path(s, scheme) {
+    return s.custom ? "/img/" + scheme + "-customizer.png"
+                    : "/img/variants/" + scheme + "-" + s.v + ".png";
+  }
+  var darkMode = matchMedia("(prefers-color-scheme: dark)");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  var scheme = darkMode.matches ? "dark" : "light";
+  var idx = 0, timer = null;
+
+  function show(i, instant) {
+    idx = (i % slides.length + slides.length) % slides.length;
+    var s = slides[idx];
+    img.classList.add("swapping");
+    var apply = function () {
+      darkSrc.srcset = path(s, "dark");
+      img.src = path(s, "light");
+      img.alt = s.custom
+        ? "LensLog’s eye customizer — preset swatches and a full color picker for iris, eyelid and glasses"
+        : "LensLog Today screen with " + s.label.toLowerCase();
+      img.addEventListener("load", function onload() {
+        img.removeEventListener("load", onload);
+        img.classList.remove("swapping");
+      });
+      setTimeout(function () { img.classList.remove("swapping"); }, 300);
+    };
+    setTimeout(apply, instant ? 0 : 110);
+    if (caption) caption.textContent = s.label;
+    Array.prototype.forEach.call(dotsEl.children, function (d, i2) {
+      d.setAttribute("aria-selected", String(i2 === idx));
     });
-  });
-  (window.requestIdleCallback || setTimeout)(function () {
-    var scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    swatches.forEach(function (btn) {
-      new Image().src = "/img/variants/" + scheme + "-" + btn.getAttribute("data-variant") + ".png";
+  }
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function start() { if (reduce.matches) return; stop(); timer = setInterval(function () { show(idx + 1); }, 2600); }
+
+  function build() {
+    slides.forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-label", s.custom ? "Show the color picker" : "Show " + s.label);
+      b.addEventListener("click", function () { show(i); start(); });
+      dotsEl.appendChild(b);
     });
+    show(0, true);
+    start();
+
+    // Preload the off-screen variants for snappy crossfades.
+    (window.requestIdleCallback || setTimeout)(function () {
+      slides.forEach(function (s) { new Image().src = path(s, scheme); });
+    });
+  }
+
+  // Pause while the reader is interacting; resume after.
+  stage.addEventListener("mouseenter", stop);
+  stage.addEventListener("mouseleave", start);
+  stage.addEventListener("focus", stop);
+  stage.addEventListener("blur", start);
+  stage.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") { show(idx + 1); start(); e.preventDefault(); }
+    else if (e.key === "ArrowLeft") { show(idx - 1); start(); e.preventDefault(); }
   });
+  var sx = null;
+  stage.addEventListener("pointerdown", function (e) { sx = e.clientX; stop(); });
+  stage.addEventListener("pointerup", function (e) {
+    if (sx === null) return;
+    var dx = e.clientX - sx; sx = null;
+    if (Math.abs(dx) > 40) show(idx + (dx < 0 ? 1 : -1));
+    start();
+  });
+  stage.addEventListener("pointercancel", function () { sx = null; start(); });
+
+  // Only include the picker slide once its screenshot exists.
+  var probe = new Image();
+  probe.onload = build;
+  probe.onerror = function () {
+    slides = slides.filter(function (s) { return !s.custom; });
+    build();
+  };
+  probe.src = path({ custom: true }, scheme);
 })();
 
 /* Scroll reveals (content is fully visible without JS; see site.css). */
